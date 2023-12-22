@@ -18,6 +18,11 @@ public class Nota {
     @Column(nullable = false, length = 100)
     private String conteudo;
 
+    /*
+    * Nota(N)--------(1)Pessoa
+    * Relação bidirecional
+    * JoinColumn: define a chave estrangeira como fk_pessoa_id
+    * */
     @ManyToOne
     @JoinColumn(name = "fk_pessoa_id", nullable = false)
     @JsonIgnore

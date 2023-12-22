@@ -20,6 +20,13 @@ public class Pessoa {
 
     private int idade;
 
+
+    /*
+     * Pessoa(1)--------(N)Notas
+     * Relação bidirecional
+     * mappedBy:Define o lado de referencia da relação
+     *
+     *  */
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Nota> notas;
@@ -34,15 +41,6 @@ public class Pessoa {
 
     }
 
-
-
-    public void addNota(Nota nota) {
-        if (notas == null) {
-            notas = new ArrayList<>();
-        }
-        notas.add(nota);
-        nota.setPessoa(this);
-    }
 
 
 }

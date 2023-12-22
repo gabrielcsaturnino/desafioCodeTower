@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/notas")
 public class NotaController {
@@ -18,7 +19,7 @@ public class NotaController {
     @Autowired
     private NotaService notaService;
 
-    @GetMapping("/pessoa/{pessoaId}")
+    @GetMapping("/{pessoaId}")
     public ResponseEntity<List<Nota>> getNotasDaPessoa(@PathVariable Long pessoaId) {
         List<Nota> notas = notaService.obterNotaPorId(pessoaId);
         if (notas != null) {
@@ -34,7 +35,7 @@ public class NotaController {
         return ResponseEntity.ok(notas);
     }
 
-    @PostMapping
+    @PostMapping("/{pessoaId}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Nota> criarNota(@RequestBody NotaRequestDTO notaRequestDTO) throws Exception {
         Nota novaNota = notaService.criarNota(notaRequestDTO);

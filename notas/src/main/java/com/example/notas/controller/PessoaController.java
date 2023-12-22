@@ -1,13 +1,27 @@
 package com.example.notas.controller;
 
 import com.example.notas.model.Pessoa;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.notas.model.PessoaRequestDTO;
+import com.example.notas.services.PessoaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/pessoa")
+@RequestMapping("/pessoas")
 public class PessoaController {
+    @Autowired
+    PessoaService pessoaService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Pessoa> criarPessoa(@RequestBody PessoaRequestDTO pessoaRequestDTO){
+           Pessoa pessoa = pessoaService.criarPessoa(pessoaRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pessoa);
+
+    }
 
 }

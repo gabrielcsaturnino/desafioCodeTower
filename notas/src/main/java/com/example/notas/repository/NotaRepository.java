@@ -13,4 +13,5 @@ public interface NotaRepository extends JpaRepository<Nota, Long> {
     List<Nota> findAll();
 
 
+
 }
