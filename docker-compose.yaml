@@ -1,0 +1,26 @@
+services:
+  db:
+    ports:
+      - 5432:5432
+    container_name: postgresql_container
+    image: postgres
+    environment:
+      - POSTGRES_DB=nota
+      - POSTGRES_PASSWORD=kjumhlozfv23
+      - POSTGRES_USER=adm2
+    volumes:
+      - C:\postgres_datapart:/var/lib/postgresql/data
+    restart: always
+
+  backend:
+    build: .
+    container_name: testapp_container
+    ports:
+      - 8089:8089
+    environment:
+      db-url: jdbc:postgresql://db:5432/nota
+      db-username: adm2
+      db-password: kjumhlozfv23
+    depends_on:
+      - db
+    restart: always
