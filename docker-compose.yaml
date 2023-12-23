@@ -13,7 +13,7 @@ services:
     restart: always
 
   backend:
-    build: .
+    build: ..
     container_name: testapp_container
     ports:
       - 8089:8089
@@ -24,3 +24,11 @@ services:
     depends_on:
       - db
     restart: always
+
+
+  frontend:
+      build: ./frontend
+      container_name: frontend_container
+      ports:
+        - 80:80
+      restart: always

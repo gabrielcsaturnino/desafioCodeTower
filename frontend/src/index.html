@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #notas-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #novo-nota-form {
+            display: none;
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #form-nota {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #form-nota label,
+        #form-nota textarea,
+        #form-nota button {
+            display: block;
+            margin: 10px 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="nome-pessoa">Notas de Pessoa</h1>
+
+    <div id="notas-container"></div>
+
+    <button id="adicionar-nota">Adicionar Nota</button>
+
+    <div id="novo-nota-form" style="display: none;">
+        <h2>Nova Nota</h2>
+        <form id="form-nota">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required>
+
+            <label for="conteudo">Conteúdo:</label>
+            <textarea id="conteudo" name="conteudo" required></textarea>
+
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let pessoaId;
+            const apiUrlPessoas = "http://localhost:8089/pessoas";
+            const apiUrlNotas = "http://localhost:8089/notas";
+            const nomePessoaElement = document.getElementById("nome-pessoa");
+            const notasContainer = document.getElementById("notas-container");
+            const adicionarNotaButton = document.getElementById("adicionar-nota");
+            const novoNotaForm = document.getElementById("novo-nota-form");
+            const formNota = document.getElementById("form-nota");
+
+            async function criarNovoUsuario() {
+                try {
+                    const response = await fetch(apiUrlPessoas, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            nome: "NomePadrao",
+                            idade: 25,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erro ao criar usuário: ${response.status} - ${response.statusText}`);
+                    }
+
+                    const usuario = await response.json();
+                    console.log(`Novo usuário criado: ${JSON.stringify(usuario)}`);
+                    pessoaId = usuario.id;
+                } catch (error) {
+                    console.error("Erro ao criar usuário:", error.message);
+                }
+            }
+
+            async function obterEExibirNotas() {
+                try {
+                    const response = await fetch(`${apiUrlNotas}/${pessoaId}`);
+
+                    if (!response.ok) {
+                        throw new Error(`Erro ao obter notas: ${response.status} - ${response.statusText}`);
+                    }
+
+                    const notas = await response.json();
+                    const nomePessoa = notas[0]?.pessoa?.nome || 'Pessoa';
+                    nomePessoaElement.textContent = `Notas de ${nomePessoa}`;
+                    notasContainer.innerHTML = "";
+
+                    if (notas.length > 0) {
+                        const ul = document.createElement("ul");
+
+                        notas.forEach(nota => {
+                            const li = document.createElement("li");
+                            li.textContent = `${nota.titulo}: ${nota.conteudo}`;
+                            ul.appendChild(li);
+                        });
+
+                        notasContainer.appendChild(ul);
+                    } else {
+                        notasContainer.textContent = "Nenhuma nota encontrada.";
+                    }
+                } catch (error) {
+                    console.error("Erro ao obter notas:", error.message);
+                    notasContainer.textContent = "Erro ao obter notas.";
+                }
+            }
+
+            adicionarNotaButton.addEventListener("click", function () {
+                novoNotaForm.style.display = "block";
+            });
+
+            formNota.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                try {
+                    if (!pessoaId) {
+                        await criarNovoUsuario();
+                    }
+
+                    const formData = new FormData(formNota);
+                    const novaNota = {
+                        titulo: formData.get("titulo"),
+                        conteudo: formData.get("conteudo"),
+                        pessoaId: pessoaId,
+                    };
+
+                    const response = await fetch(`${apiUrlNotas}/${pessoaId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(novaNota),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erro ao adicionar nota: ${response.status} - ${response.statusText}`);
+                    }
+
+                    alert("Nota adicionada com sucesso!");
+                    obterEExibirNotas();
+                } catch (error) {
+                    console.error("Erro ao adicionar nota:", error.message);
+                    alert("Erro ao adicionar nota. Por favor, tente novamente.");
+                }
+            });
+
+            // Verificar se já existe um usuário
+            criarNovoUsuario()
+                .then(() => {
+                    // Chame a função para obter e exibir notas quando a página carregar
+                    obterEExibirNotas();
+                });
+        });
+    </script>
+</body>
+</html>
