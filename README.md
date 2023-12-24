@@ -34,6 +34,8 @@ async function criarNovoUsuario() {
 
   
 
-docker-compose up -d\n
-http://localhost:80\n
+docker-compose up -d
+
+http://localhost:80
+
 Necessário um pequeno tempo de espera para a criação do usuário.
