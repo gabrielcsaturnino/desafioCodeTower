@@ -1,7 +1,9 @@
 Cadastro de usuário: realizado automaticamente a cada reload na pagina.
 
 script para criação de nova 'Usuário':
+
 async function criarNovoUsuario() {
+            
             try {
                 const response = await fetch(apiUrlPessoas, {
                     method: "POST",
@@ -25,6 +27,7 @@ async function criarNovoUsuario() {
                 console.error("Erro ao criar usuário:", error.message);
             }
         }
+        
 
   Script ja imbutido no frontend.
 
