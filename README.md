@@ -2,8 +2,9 @@ Cadastro de usuário: realizado automaticamente a cada reload na pagina.
 
 script para criação de nova 'Usuário':
 
+
 async function criarNovoUsuario() {
-            
+           
             try {
                 const response = await fetch(apiUrlPessoas, {
                     method: "POST",
@@ -33,6 +34,6 @@ async function criarNovoUsuario() {
 
   
 
-docker-compose up -d.
-http://localhost:80.
+docker-compose up -d\n
+http://localhost:80\n
 Necessário um pequeno tempo de espera para a criação do usuário.
