@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter @Setter @Table(name = "Pessoa")
@@ -24,10 +23,13 @@ public class Pessoa {
     /*
      * Pessoa(1)--------(N)Notas
      * Relação bidirecional
-     * mappedBy:Define o lado de referencia da relação
+     * mappedBy:Define o lado de 'referencia' da relação
      *
      *  */
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+    /*
+    * JsonIgnore: utilizado para evitar referencia ciclica.
+    * */
     @JsonIgnore
     private List<Nota> notas;
 

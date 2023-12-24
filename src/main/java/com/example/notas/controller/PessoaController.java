@@ -14,6 +14,9 @@ public class PessoaController {
     @Autowired
     PessoaService pessoaService;
 
+    /*
+    * Metodo para criar 'Pessoa'.
+    * */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Pessoa> criarPessoa(@RequestBody PessoaRequestDTO pessoaRequestDTO){

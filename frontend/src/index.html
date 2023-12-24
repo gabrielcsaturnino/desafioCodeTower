@@ -116,7 +116,7 @@
     </style>
 </head>
 <body>
-<h1 id="nome-pessoa">Notas</h1>
+<h1>Notas</h1>
 
 <div id="notas-container"></div>
 
@@ -135,6 +135,19 @@
     </form>
 </div>
 
+<div id="modificar-nota-form" style="display: none;">
+    <h2>Modificar Nota</h2>
+    <form id="form-modificar-nota">
+        <label for="titulo-modificar">Título:</label>
+        <input type="text" id="titulo-modificar" name="titulo-modificar" required>
+
+        <label for="conteudo-modificar">Conteúdo:</label>
+        <textarea id="conteudo-modificar" name="conteudo-modificar" required></textarea>
+
+        <button type="submit">Salvar Modificações</button>
+    </form>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let pessoaId;
@@ -145,6 +158,8 @@
         const adicionarNotaButton = document.getElementById("adicionar-nota");
         const novoNotaForm = document.getElementById("novo-nota-form");
         const formNota = document.getElementById("form-nota");
+        const modificarNotaForm = document.getElementById("modificar-nota-form");
+        const formModificarNota = document.getElementById("form-modificar-nota");
 
         async function criarNovoUsuario() {
             try {
@@ -180,26 +195,11 @@
                 }
 
                 const notas = await response.json();
-                const nomePessoa = notas[0]?.pessoa?.nome || 'Pessoa';
-                nomePessoaElement.textContent = `Notas de ${nomePessoa}`;
                 notasContainer.innerHTML = "";
 
                 if (notas.length > 0) {
                     notas.forEach(nota => {
-                        const notaContainer = document.createElement("div");
-                        notaContainer.classList.add("nota-container");
-
-                        const tituloElement = document.createElement("div");
-                        tituloElement.classList.add("titulo");
-                        tituloElement.textContent = `${nota.titulo}`;
-                        notaContainer.appendChild(tituloElement);
-
-                        const conteudoElement = document.createElement("div");
-                        conteudoElement.classList.add("conteudo");
-                        conteudoElement.textContent = `${nota.conteudo}`;
-                        notaContainer.appendChild(conteudoElement);
-
-                        notasContainer.appendChild(notaContainer);
+                        criarNotaContainer(nota);
                     });
                 } else {
                     notasContainer.textContent = "Nenhuma nota encontrada.";
@@ -208,6 +208,101 @@
                 console.error("Erro ao obter notas:", error.message);
                 notasContainer.textContent = "Erro ao obter notas.";
             }
+        }
+
+        function criarNotaContainer(nota) {
+            const notaContainer = document.createElement("div");
+            notaContainer.classList.add("nota-container");
+
+            const tituloElement = document.createElement("div");
+            tituloElement.classList.add("titulo");
+            tituloElement.textContent = `${nota.titulo}`;
+            notaContainer.appendChild(tituloElement);
+
+            const conteudoElement = document.createElement("div");
+            conteudoElement.classList.add("conteudo");
+            conteudoElement.textContent = `${nota.conteudo}`;
+            notaContainer.appendChild(conteudoElement);
+
+            // Adiciona o botão de deletar
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Deletar";
+            deleteButton.addEventListener("click", async () => {
+                await deletarNota(nota.id);
+            });
+            notaContainer.appendChild(deleteButton);
+
+            // Adiciona o botão de modificar
+            const modificarButton = document.createElement("button");
+            modificarButton.textContent = "Modificar";
+            modificarButton.addEventListener("click", () => {
+                modificarNota(nota);
+            });
+            notaContainer.appendChild(modificarButton);
+
+            notasContainer.appendChild(notaContainer);
+        }
+
+        async function deletarNota(notaId) {
+            try {
+                const response = await fetch(`${apiUrlNotas}/${notaId}`, {
+                    method: "DELETE",
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro ao deletar nota: ${response.status} - ${response.statusText}`);
+                }
+
+                alert("Nota deletada com sucesso!");
+                obterEExibirNotas();
+            } catch (error) {
+                console.error("Erro ao deletar nota:", error.message);
+                alert("Erro ao deletar nota. Por favor, tente novamente.");
+            }
+        }
+
+        function modificarNota(nota) {
+            // Preenche o formulário de modificar com os detalhes da nota selecionada
+            document.getElementById("titulo-modificar").value = nota.titulo;
+            document.getElementById("conteudo-modificar").value = nota.conteudo;
+
+            // Exibe o formulário de modificar
+            modificarNotaForm.style.display = "block";
+
+            // Adiciona um listener para o formulário de modificar
+            formModificarNota.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                try {
+                    const formData = new FormData(formModificarNota);
+                    const notaModificada = {
+                        titulo: formData.get("titulo-modificar"),
+                        conteudo: formData.get("conteudo-modificar"),
+                        pessoaId: pessoaId,
+                    };
+
+                    const response = await fetch(`${apiUrlNotas}/${nota.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(notaModificada),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Erro ao modificar nota: ${response.status} - ${response.statusText}`);
+                    }
+
+                    alert("Nota modificada com sucesso!");
+                    obterEExibirNotas();
+
+                    // Oculta o formulário de modificar após a modificação
+                    modificarNotaForm.style.display = "none";
+                } catch (error) {
+                    console.error("Erro ao modificar nota:", error.message);
+                    alert("Erro ao modificar nota. Por favor, tente novamente.");
+                }
+            });
         }
 
         adicionarNotaButton.addEventListener("click", function () {

@@ -6,8 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
+/*
+ * Interface utilizada para realizar consultas no banco de dados.
+ *
+ * <Pessoa: Representa a entidade a ser consultada.>
+ * <Long: Representa o tipo utilizado na chave primaria.>
+ * */
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
-   Optional<Pessoa> findById(Long id);
+
+
 
 }

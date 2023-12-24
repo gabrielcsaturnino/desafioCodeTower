@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NotaService {
@@ -34,6 +35,19 @@ public class NotaService {
         return notaRepository.save(novaNota);
     }
 
+
+    public void deletarNota(Long notaId) {
+            notaRepository.deleteById(notaId);
+    }
+
+
+    public Nota modificarNota(NotaRequestDTO notaRequestDTO, long id) throws Exception {
+        Nota notaexistente = notaRepository.findById(id).orElseThrow();
+
+        notaexistente.setTitulo(notaRequestDTO.getTitulo());
+        notaexistente.setConteudo(notaRequestDTO.getConteudo());
+        return notaRepository.save(notaexistente);
+    }
 
 
 
