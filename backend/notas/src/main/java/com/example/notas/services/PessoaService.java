@@ -2,7 +2,7 @@ package com.example.notas.services;
 
 import com.example.notas.model.IdNotFindException;
 import com.example.notas.model.Pessoa;
-import com.example.notas.model.PessoaRequestDTO;
+import com.example.notas.dto.PessoaRequestDTO;
 import com.example.notas.repository.PessoaRepository;
 import org.springframework.stereotype.Service;
 

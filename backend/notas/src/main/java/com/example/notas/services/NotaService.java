@@ -1,10 +1,9 @@
 package com.example.notas.services;
 
 import com.example.notas.model.Nota;
-import com.example.notas.model.NotaRequestDTO;
+import com.example.notas.dto.NotaRequestDTO;
 import com.example.notas.model.Pessoa;
 import com.example.notas.repository.NotaRepository;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,9 @@ public class NotaService {
     private PessoaService pessoaService;
 
 
+   /*
+   * Injeção de dependencias.
+   * */
     @Autowired
     public NotaService(NotaRepository notaRepository, PessoaService pessoaService) {
         this.notaRepository = notaRepository;
@@ -25,9 +27,6 @@ public class NotaService {
         return notaRepository.findByPessoaId(id);
     }
 
-    public List<Nota> obterTodas(){
-        return notaRepository.findAll();
-    }
 
     public Nota criarNota(NotaRequestDTO notaRequestDTO) throws Exception {
         Pessoa pessoa = pessoaService.obterPessoaPorId(notaRequestDTO.getPessoaId());

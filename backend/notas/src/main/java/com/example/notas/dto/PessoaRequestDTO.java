@@ -1,4 +1,4 @@
-package com.example.notas.model;
+package com.example.notas.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

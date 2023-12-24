@@ -10,7 +10,6 @@ import java.util.List;
 public interface NotaRepository extends JpaRepository<Nota, Long> {
 
     List<Nota> findByPessoaId(Long id);
-    List<Nota> findAll();
 
 
 

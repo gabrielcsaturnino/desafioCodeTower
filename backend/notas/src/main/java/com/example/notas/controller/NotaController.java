@@ -1,9 +1,8 @@
 package com.example.notas.controller;
 
 import com.example.notas.model.Nota;
-import com.example.notas.model.NotaRequestDTO;
+import com.example.notas.dto.NotaRequestDTO;
 import com.example.notas.services.NotaService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +28,7 @@ public class NotaController {
         }
     }
 
-    @GetMapping("/todas")
-    public ResponseEntity<List<Nota>> getAll(){
-        List<Nota> notas = notaService.obterTodas();
-        return ResponseEntity.ok(notas);
-    }
+
 
     @PostMapping("/{pessoaId}")
     @ResponseStatus(HttpStatus.CREATED)
