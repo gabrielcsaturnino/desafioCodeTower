@@ -1,6 +1,6 @@
 Cadastro de usuário: realizado automaticamente a cada reload na pagina.
 
-script para criação de nova 'Usuário':
+script para criação de novo 'Usuário':
 
 
 async function criarNovoUsuario() {

@@ -53,8 +53,7 @@
             border-radius: 5px;
             margin-bottom: 10px;
             box-sizing: border-box;
-            overflow: hidden;
-            overflow-y: auto; /* Adicionado para permitir rolagem vertical no bloco */
+            overflow-y: auto;
         }
 
         .titulo {
@@ -68,19 +67,26 @@
 
         .conteudo {
             text-align: justify;
-            max-height: 60px; /* Defina a altura máxima desejada */
-            overflow-y: auto; /* Adicionado para permitir rolagem vertical no conteúdo */
+            max-height: 60px;
+            overflow-y: auto;
             word-wrap: break-word;
         }
 
-        button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px;
+        .adicionar-nota-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background-color: #4caf50;
             color: #fff;
             border: none;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
         }
 
         #novo-nota-form {
@@ -104,15 +110,6 @@
             display: block;
             margin: 10px 0;
         }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -120,7 +117,7 @@
 
 <div id="notas-container"></div>
 
-<button id="adicionar-nota">Adicionar Nota</button>
+<button class="adicionar-nota-button" id="adicionar-nota">&#43;</button>
 
 <div id="novo-nota-form" style="display: none;">
     <h2>Nova Nota</h2>
@@ -135,31 +132,15 @@
     </form>
 </div>
 
-<div id="modificar-nota-form" style="display: none;">
-    <h2>Modificar Nota</h2>
-    <form id="form-modificar-nota">
-        <label for="titulo-modificar">Título:</label>
-        <input type="text" id="titulo-modificar" name="titulo-modificar" required>
-
-        <label for="conteudo-modificar">Conteúdo:</label>
-        <textarea id="conteudo-modificar" name="conteudo-modificar" required></textarea>
-
-        <button type="submit">Salvar Modificações</button>
-    </form>
-</div>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let pessoaId;
         const apiUrlPessoas = "http://localhost:8089/pessoas";
         const apiUrlNotas = "http://localhost:8089/notas";
-        const nomePessoaElement = document.getElementById("nome-pessoa");
         const notasContainer = document.getElementById("notas-container");
         const adicionarNotaButton = document.getElementById("adicionar-nota");
         const novoNotaForm = document.getElementById("novo-nota-form");
         const formNota = document.getElementById("form-nota");
-        const modificarNotaForm = document.getElementById("modificar-nota-form");
-        const formModificarNota = document.getElementById("form-modificar-nota");
 
         async function criarNovoUsuario() {
             try {
@@ -236,7 +217,7 @@
             const modificarButton = document.createElement("button");
             modificarButton.textContent = "Modificar";
             modificarButton.addEventListener("click", () => {
-                modificarNota(nota);
+                modificarNota(notaContainer, nota);
             });
             notaContainer.appendChild(modificarButton);
 
@@ -261,15 +242,44 @@
             }
         }
 
-        function modificarNota(nota) {
-            // Preenche o formulário de modificar com os detalhes da nota selecionada
-            document.getElementById("titulo-modificar").value = nota.titulo;
-            document.getElementById("conteudo-modificar").value = nota.conteudo;
+        function modificarNota(notaContainer, nota) {
 
-            // Exibe o formulário de modificar
-            modificarNotaForm.style.display = "block";
+            const formModificarNota = document.createElement("form");
+            formModificarNota.id = "form-modificar-nota";
 
-            // Adiciona um listener para o formulário de modificar
+            const labelTitulo = document.createElement("label");
+            labelTitulo.setAttribute("for", "titulo-modificar");
+            labelTitulo.textContent = "Título:";
+
+            const inputTitulo = document.createElement("input");
+            inputTitulo.type = "text";
+            inputTitulo.id = "titulo-modificar";
+            inputTitulo.name = "titulo-modificar";
+            inputTitulo.value = nota.titulo;
+            inputTitulo.required = true;
+
+            const labelConteudo = document.createElement("label");
+            labelConteudo.setAttribute("for", "conteudo-modificar");
+            labelConteudo.textContent = "Conteúdo:";
+
+            const textareaConteudo = document.createElement("textarea");
+            textareaConteudo.id = "conteudo-modificar";
+            textareaConteudo.name = "conteudo-modificar";
+            textareaConteudo.value = nota.conteudo;
+            textareaConteudo.required = true;
+
+            const buttonSalvar = document.createElement("button");
+            buttonSalvar.type = "submit";
+            buttonSalvar.textContent = "Salvar Modificações";
+
+
+            formModificarNota.appendChild(labelTitulo);
+            formModificarNota.appendChild(inputTitulo);
+            formModificarNota.appendChild(labelConteudo);
+            formModificarNota.appendChild(textareaConteudo);
+            formModificarNota.appendChild(buttonSalvar);
+
+
             formModificarNota.addEventListener("submit", async function (event) {
                 event.preventDefault();
 
@@ -296,13 +306,16 @@
                     alert("Nota modificada com sucesso!");
                     obterEExibirNotas();
 
-                    // Oculta o formulário de modificar após a modificação
-                    modificarNotaForm.style.display = "none";
+
+                    notaContainer.removeChild(formModificarNota);
                 } catch (error) {
                     console.error("Erro ao modificar nota:", error.message);
                     alert("Erro ao modificar nota. Por favor, tente novamente.");
                 }
             });
+
+
+            notaContainer.appendChild(formModificarNota);
         }
 
         adicionarNotaButton.addEventListener("click", function () {
