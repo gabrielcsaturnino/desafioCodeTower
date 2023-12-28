@@ -30,7 +30,7 @@ async function criarNovoUsuario() {
         }
         
 
-  Script ja imbutido no frontend.
+  Script ja embutido no frontend.
 
   
 
