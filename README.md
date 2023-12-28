@@ -34,6 +34,8 @@ async function criarNovoUsuario() {
 
   
 
+mvn install
+
 docker-compose up -d
 
 http://localhost:80
