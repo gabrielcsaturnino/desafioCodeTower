@@ -8,8 +8,6 @@ services:
       - POSTGRES_DB=nota
       - POSTGRES_PASSWORD=kjumhlozfv23
       - POSTGRES_USER=adm2
-    volumes:
-      - C:\postgres_datapart:/var/lib/postgresql/data
     restart: always
 
   backend:
